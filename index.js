@@ -4,10 +4,8 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
-// Middleware
 app.use(bodyParser.json());
 
-// Connect to MongoDB
 mongoose
   .connect("mongodb://127.0.0.1:27017/restaurantRatings", {
     useNewUrlParser: true,
@@ -16,7 +14,6 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("Could not connect to MongoDB:", err));
 
-// Mongoose Schemas and Models
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -39,9 +36,6 @@ const User = mongoose.model("User", userSchema);
 const Restaurant = mongoose.model("Restaurant", restaurantSchema);
 const Rating = mongoose.model("Rating", ratingSchema);
 
-// Routes
-
-// Create a new user
 app.post("/users", async (req, res) => {
   try {
     const user = new User(req.body);
@@ -52,7 +46,6 @@ app.post("/users", async (req, res) => {
   }
 });
 
-// Create a new restaurant
 app.post("/restaurants", async (req, res) => {
   try {
     const restaurant = new Restaurant(req.body);
@@ -63,12 +56,11 @@ app.post("/restaurants", async (req, res) => {
   }
 });
 
-// Add a rating for a restaurant
+
 app.post("/ratings", async (req, res) => {
   try {
     const { user, restaurant, rating, comment } = req.body;
 
-    // Validate user and restaurant existence
     const foundUser = await User.findById(user);
     const foundRestaurant = await Restaurant.findById(restaurant);
     if (!foundUser || !foundRestaurant) {
@@ -83,7 +75,6 @@ app.post("/ratings", async (req, res) => {
   }
 });
 
-// Get all ratings for a restaurant
 app.get("/restaurants/:restaurantId/ratings", async (req, res) => {
   try {
     const { restaurantId } = req.params;
@@ -94,7 +85,6 @@ app.get("/restaurants/:restaurantId/ratings", async (req, res) => {
   }
 });
 
-// Start the server
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
